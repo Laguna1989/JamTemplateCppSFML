@@ -1,9 +1,9 @@
 #include "Player.hpp"
 #include "StateGame.hpp"
 
-void Player::shoorArrow()
+void Player::shootPresent()
 {
-	Player::m_gameState.spawnArrow(getPosition() + sf::Vector2f{24,12});
+	Player::m_gameState.spawnPresent();
 	m_shootTimer = GP::playerShotTimer();
 	m_sprite.flash(0.25f);
 }

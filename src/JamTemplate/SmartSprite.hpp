@@ -78,6 +78,10 @@ namespace JamTemplate
 			return m_sprite.getScale();
 		}
 
+		void rotate(float a)
+		{
+			m_sprite.setRotation(a);
+		}
 
 	private:
 		sf::Sprite m_sprite;

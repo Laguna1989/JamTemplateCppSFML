@@ -3,16 +3,16 @@ cmake_minimum_required (VERSION 2.6)
 #####################################################
 ## Variables to be set depending on project
 #####################################################
-set (PROJECTNAME "MyAwesomeGame") 
+set (PROJECTNAME "SantaMcDroplord") 
 
 set (GAMEFILES 
-	src/main.cpp
-	src/Player.cpp
-	src/Balloon.hpp
 	src/GameProperties.hpp
 	src/Hud.hpp
+	src/House.hpp
+	src/main.cpp
+	src/Player.cpp
 	src/Player.hpp
-	src/Shot.hpp
+	src/Present.hpp
 	src/StateGame.hpp
 	src/StateMenu.hpp
 	)	
@@ -46,16 +46,6 @@ set (JAMTEMPLATEFILES
 	src/JamTemplate/MathHelper.hpp
 	)
 
-set (STRESSTESTFILES
-	src/StressTest/main.cpp
-	src/StressTest/State1.hpp
-	src/StressTest/State1.cpp
-	src/StressTest/State2.hpp
-	src/StressTest/State2.cpp
-	src/StressTest/SwarmObject.hpp
-	src/StressTest/Object.hpp
-	)
-
 
 if(WIN32)
 	set (CMAKE_CXX_STANDARD 14)
@@ -80,7 +70,6 @@ endif (APPLE)
 
 add_library(JamTemplate ${JAMTEMPLATEFILES})
 add_executable(${PROJECTNAME}  ${GAMEFILES})
-add_executable(StressTest  ${STRESSTESTFILES})
 
 target_include_directories(JamTemplate PRIVATE ext/SFML-2.5.1_win/include)
 target_include_directories(JamTemplate PRIVATE /usr/local/Cellar/sfml/2.4.2_1/include) 
@@ -102,14 +91,6 @@ target_link_libraries(${PROJECTNAME} optimized sfml-system )
 target_link_libraries(${PROJECTNAME} optimized sfml-graphics )
 target_link_libraries(${PROJECTNAME} JamTemplate)
 
-
-
-target_include_directories(StressTest PRIVATE ext/SFML-2.5.1_win/include)
-target_include_directories(StressTest PRIVATE /usr/local/Cellar/sfml/2.4.2_1/include) 
-target_link_libraries(StressTest optimized sfml-window )
-target_link_libraries(StressTest optimized sfml-system )
-target_link_libraries(StressTest optimized sfml-graphics )
-target_link_libraries(StressTest JamTemplate)
 
 
 #####################################################

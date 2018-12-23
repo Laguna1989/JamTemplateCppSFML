@@ -13,8 +13,8 @@
 #include "JamTemplate/TweenAlpha.hpp"
 
 #include "Player.hpp"
-#include "Balloon.hpp"
-#include "Shot.hpp"
+#include "Present.hpp"
+#include "House.hpp"
 #include "Hud.hpp"
 
 
@@ -22,26 +22,29 @@ class StateGame : public JamTemplate::GameState {
 public:
 	StateGame() = default;
 
-	void spawnBalloon()
+	void spawnPresent()
 	{
-		auto b = std::make_shared<Balloon>();
+		auto b = std::make_shared<Present>();
 		add(b);
-		m_balloons->push_back(b);
+		b->setPosition(m_player->getPosition());
+		m_presents->push_back(b);
 	}
 
-	void spawnArrow(sf::Vector2f p)
+	void spawnHouse()
 	{
-		auto s = std::make_shared<Shot>(p);
-		add(s);
-		m_shots->push_back(s);
+		auto h = std::make_shared<House>();
+		h->setPosition(sf::Vector2f{300 + 64, 200-64});
+		add(h);
+		m_houses->push_back(h);
 	}
 
 private:
 
 	std::shared_ptr<Hud> m_hud;
 	std::shared_ptr<Player> m_player;
-	JamTemplate::ObjectGroup<Balloon>::Sptr m_balloons;
-	JamTemplate::ObjectGroup<Shot>::Sptr m_shots;
+	JamTemplate::ObjectGroup<Present>::Sptr m_presents;
+	JamTemplate::ObjectGroup<House>::Sptr m_houses;
+
 
 	sf::RectangleShape m_sky;
 
@@ -49,16 +52,18 @@ private:
 
 	void doInternalUpdate (float const /*elapsed*/) override
 	{
-		for (auto const& sp : *m_shots)
+		//std::cout << m_presents->size() << std::endl;
+		for (const auto& hw: *m_houses)
 		{
-			auto s = sp.lock();
-			for (auto const& bp : *m_balloons)
+			auto const& h = hw.lock();
+			if (h->getAge() <= 0.75f) continue;
+			for (auto const& pw : *m_presents)
 			{
-				auto b = bp.lock();
-				//if (JamTemplate::Collision::CircleTest<>(b->getShape(), s->getShape()))
-				if (JamTemplate::Collision::BoundingBoxTest<>(b->getShape(), s->getShape()))
+				auto const& p = pw.lock();
+				if (JamTemplate::Collision::BoundingBoxTest(p->getSprite(), h->getSprite()))
 				{
-					b->kill();
+					p->kill();
+					h->flash();
 					m_hud->increaseScore();
 				}
 			}
@@ -71,7 +76,7 @@ private:
 		float w = static_cast<float>(getGame()->getRenderTarget()->getSize().x);
 		float h = static_cast<float>(getGame()->getRenderTarget()->getSize().y);
 		m_sky = sf::RectangleShape(sf::Vector2f(w,h));
-		m_sky.setFillColor(sf::Color{ 178, 255,255});
+		m_sky.setFillColor(sf::Color{ 22,26,61});
 
 		m_hud = std::make_shared<Hud>();
 		add(m_hud);
@@ -79,12 +84,8 @@ private:
 		m_player = std::make_shared<Player>(*this);
 		add(m_player);
 
-		auto t = std::make_shared<JamTemplate::Timer>(GP::balloonSpawnTime(), [this]() {this->spawnBalloon(); }, -1);
-		add(t);
-		m_balloons = std::make_shared<JamTemplate::ObjectGroup<Balloon> >();
-		add(m_balloons);
-		m_shots = std::make_shared<JamTemplate::ObjectGroup<Shot> >();
-		add(m_shots);
+		m_presents = std::make_shared<JamTemplate::ObjectGroup<Present> >();
+		add(m_presents);
 		
 		using JamTemplate::TweenAlpha;
 		using JamTemplate::SmartShape;
@@ -94,12 +95,17 @@ private:
 		m_overlay->setColor(sf::Color{ 0,0,0 });
 		auto tw = TweenAlpha<SmartShape>::create(m_overlay, 0.5f, sf::Uint8{ 255 }, sf::Uint8{ 0 });
 		add(tw);
+
+		m_houses = std::make_shared<JamTemplate::ObjectGroup<House>>();
+		add(m_houses);
+
+		JamTemplate::Timer::Sptr t = std::make_shared<JamTemplate::Timer>(1.5f, [this]() {spawnHouse(); });
+		add(t);
 	}
 
 	void drawSky() const
 	{
 		getGame()->getRenderTarget()->draw(m_sky);
-
 	}
 
 	void doDraw() const override

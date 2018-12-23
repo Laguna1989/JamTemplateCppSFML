@@ -18,7 +18,10 @@ class Player : public JamTemplate::GameObject, public JamTemplate::Transform {
 public:
 	Player(StateGame& sg) : m_gameState(sg)
 	{
-		setPosition(sf::Vector2f{ 10, 20 });
+		setPosition(sf::Vector2f{ 20,70});
+		setDragVelocity(sf::Vector2f{0.95f,0.95f});
+		float mv = GP::playerMovementSpeed();
+		setBoundsVelocity(sf::FloatRect{ -mv,-mv,2 * mv,2 * mv });
 	}
 
 	~Player() = default;
@@ -42,19 +45,19 @@ private:
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
 		{
-			shoorArrow();
+			shootPresent();
 		}
 	}
 	void updateMovement(float elapsed)
 	{
-		setVelocity({ 0.f,0.f });
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
+		setAcceleration({ 0.f,0.f });
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
 		{
-			setVelocity({0,-GP::playerMovementSpeed()});
+			setAcceleration({GP::playerAcceleration(),0});
 		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
 		{
-			setVelocity({ 0,GP::playerMovementSpeed()  });
+			setAcceleration({- GP::playerAcceleration() ,0 });
 		}
 		updateTransform(elapsed);
 		m_sprite.setPosition(getPosition());
@@ -69,18 +72,14 @@ private:
 	{
 		float w = static_cast<float>(getGame()->getRenderTarget()->getSize().x);
 		float h = static_cast<float>(getGame()->getRenderTarget()->getSize().y);
-		setBoundsPosition(sf::FloatRect(0, 0, w, h-24));
-
-		/*m_sprite.loadSprite("assets/player.png");*/
-		using JamTemplate::MathHelper;
-		m_sprite.add("assets/coin.png", "idle", sf::Vector2u{ 16,16 }, MathHelper::vectorBetween(0U,11U), 0.15f);
-		m_sprite.play("idle");
+		setBoundsPosition(sf::FloatRect(0, 0, w-16, h-32));
+		m_sprite.loadSprite("assets/santa.png", sf::IntRect{0,0,79,32});
 	}
-	void shoorArrow();
+	void shootPresent();
 
 	StateGame& m_gameState;
 
-	JamTemplate::Animation m_sprite;
+	JamTemplate::SmartSprite m_sprite;
 };
 
 #endif

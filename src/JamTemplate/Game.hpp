@@ -16,7 +16,7 @@ public:
 	{
 	}
 
-	void setUp(unsigned int w, unsigned int h, std::string title)
+	void setUp(unsigned int /*w*/, unsigned int /*h*/, std::string /*title*/)
 	{
 	}
 	

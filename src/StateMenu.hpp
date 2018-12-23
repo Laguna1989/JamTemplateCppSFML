@@ -11,8 +11,9 @@ public:
 private:
 	void doInternalUpdate (float const /*elapsed*/) override 
 	{
-		//if (getAge() >= 0.25)
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+		
+		///*if*/ (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+		if (getAge() >= 0.25)
 		{
 			getGame()->switchState(std::make_shared<StateGame>());
 		}

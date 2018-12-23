@@ -7,12 +7,12 @@
 
 int main()
 {
-	auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(800, 600), "SFML works!");
+	auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(900, 600), "Santa McDroplord");
 	auto renderTexture = std::make_shared<sf::RenderTexture>();
-	renderTexture->create(200, 150, false);
+	renderTexture->create(300, 200, false);
 	renderTexture->setSmooth(false);
 
-	auto view = std::make_shared<sf::View>(sf::FloatRect(0, 0, 200, 150));
+	auto view = std::make_shared<sf::View>(sf::FloatRect(0, 0, 300, 200));
 	view->setViewport(sf::FloatRect(0, 0, 1, 1));
 	JamTemplate::Game::Sptr game = std::make_shared<JamTemplate::Game>();
 	game->switchState(std::make_shared<StateMenu>());
@@ -42,7 +42,7 @@ int main()
 		sf::Sprite spr(texture);
 		//Note: RenderTexture has a bug and is displayed upside down. 
 		//This is corrected by the following two lines
-		spr.setScale(sf::Vector2f(4, -4));
+		spr.setScale(sf::Vector2f(3, -3));
 		spr.setPosition(0, 600);
 
 		window->draw(spr);

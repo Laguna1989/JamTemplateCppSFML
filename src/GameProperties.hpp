@@ -5,11 +5,9 @@ class GP
 {
 public:
 	GP() = delete;
-	static float playerMovementSpeed() { return 40; }
-	static float playerShotTimer() { return 0.6f; }
-	static float shotMovementSpeed() { return 240; }
-	static float balloonMoveSpeed() { return 45; }
-	static float balloonSpawnTime() { return 1.75f; }
+	static float playerMovementSpeed() { return 200; }
+	static float playerAcceleration() {return 400; }
+	static float playerShotTimer() { return 0.9f; }
 };
 
 #endif
