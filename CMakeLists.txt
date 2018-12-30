@@ -3,16 +3,14 @@ cmake_minimum_required (VERSION 2.6)
 #####################################################
 ## Variables to be set depending on project
 #####################################################
-set (PROJECTNAME "MyAwesomeGame") 
+set (PROJECTNAME "1hgj192") 
 
 set (GAMEFILES 
 	src/main.cpp
-	src/Player.cpp
-	src/Balloon.hpp
 	src/GameProperties.hpp
 	src/Hud.hpp
-	src/Player.hpp
-	src/Shot.hpp
+	src/Customer.cpp
+	src/Customer.hpp
 	src/StateGame.hpp
 	src/StateMenu.hpp
 	)	

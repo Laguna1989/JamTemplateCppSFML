@@ -5,40 +5,46 @@
 #include <SFML/Graphics.hpp>
 
 #include "JamTemplate/GameObject.hpp"
-#include "JamTemplate/Game.hpp"
+
+#include "JamTemplate/SmartText.hpp"
 
 class Hud : public JamTemplate::GameObject {
 public:
 	Hud() 
 	{
-		//m_font.loadFromFile("assets/ARCADECLASSIC.TTF");
-	
-		//m_text = sf::Text("Score   0", m_font, 24);
-	/*	m_text.setPosition(0, 0);
-		m_text.setOutlineColor(sf::Color::Black);
-		m_text.setOutlineThickness(2);*/
 	}
 
 	void increaseScore()
 	{
 		m_score++;
-		//m_text.setString("Score   " + std::to_string(m_score));
+		m_text->setText("Money   " + std::to_string(m_score));
 	}
 
 private:
-	void doUpdate(float const /*elapsed*/) override
+
+	int m_score{ -1 };
+	JamTemplate::SmartText::Sptr m_text;
+
+	void doUpdate(float const elapsed) override
 	{
+		m_text->update(elapsed);
 	}
 
 	void doDraw() const override
 	{
-		getGame()->getRenderTarget()->draw(m_text);
+		m_text->draw(getGame()->getRenderTarget());
 	}
 
-	//sf::Font m_font;
-	sf::Text m_text;
+	void doCreate() override
+	{
+		m_text = std::make_shared<JamTemplate::SmartText>();
+		m_text->loadFont("assets/font.ttf");
+		m_text->setCharacterSize(8);
+		m_text->setMoveWithCam(false);
+		m_text->setOutline(1, sf::Color::Black);
+		increaseScore();
+	}
 
-	int m_score{ 0 };
 };
 
 #endif

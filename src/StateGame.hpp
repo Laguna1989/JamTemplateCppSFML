@@ -12,9 +12,7 @@
 #include "JamTemplate/SmartShape.hpp"
 #include "JamTemplate/TweenAlpha.hpp"
 
-#include "Player.hpp"
-#include "Balloon.hpp"
-#include "Shot.hpp"
+#include "Customer.hpp"
 #include "Hud.hpp"
 
 
@@ -22,27 +20,14 @@ class StateGame : public JamTemplate::GameState {
 public:
 	StateGame() = default;
 
-	void spawnBalloon()
-	{
-		auto b = std::make_shared<Balloon>();
-		add(b);
-		m_balloons->push_back(b);
-	}
+	std::shared_ptr<Hud> getHud() { return m_hud; }
 
-	void spawnArrow(sf::Vector2f p)
-	{
-		auto s = std::make_shared<Shot>(p);
-		add(s);
-		m_shots->push_back(s);
-	}
 
 private:
 
 	std::shared_ptr<Hud> m_hud;
-	std::shared_ptr<Player> m_player;
-	JamTemplate::ObjectGroup<Balloon>::Sptr m_balloons;
-	JamTemplate::ObjectGroup<Shot>::Sptr m_shots;
-
+	JamTemplate::ObjectGroup<Customer>::Sptr m_customers;
+	
 	sf::RectangleShape m_sky;
 
 	JamTemplate::SmartShape::Sptr m_overlay;
@@ -50,20 +35,6 @@ private:
 	void doInternalUpdate (float const elapsed) override
 	{
 		m_overlay->update(elapsed);
-		for (auto const& sp : *m_shots)
-		{
-			auto s = sp.lock();
-			for (auto const& bp : *m_balloons)
-			{
-				auto b = bp.lock();
-				//if (JamTemplate::Collision::CircleTest<>(b->getShape(), s->getShape()))
-				if (JamTemplate::Collision::BoundingBoxTest<>(b->getShape(), s->getShape()))
-				{
-					b->kill();
-					m_hud->increaseScore();
-				}
-			}
-		}
 	}
 
 	void doCreate() override
@@ -71,20 +42,13 @@ private:
 		float w = static_cast<float>(getGame()->getRenderTarget()->getSize().x);
 		float h = static_cast<float>(getGame()->getRenderTarget()->getSize().y);
 		m_sky = sf::RectangleShape(sf::Vector2f(w,h));
-		m_sky.setFillColor(sf::Color{ 178, 255,255});
+		m_sky.setFillColor(sf::Color{ 30,30,50});
 
 		m_hud = std::make_shared<Hud>();
 		add(m_hud);
 
-		m_player = std::make_shared<Player>(*this);
-		add(m_player);
-
-		auto t = std::make_shared<JamTemplate::Timer>(GP::balloonSpawnTime(), [this]() {this->spawnBalloon(); }, -1);
-		add(t);
-		m_balloons = std::make_shared<JamTemplate::ObjectGroup<Balloon> >();
-		add(m_balloons);
-		m_shots = std::make_shared<JamTemplate::ObjectGroup<Shot> >();
-		add(m_shots);
+		m_customers = std::make_shared<JamTemplate::ObjectGroup<Customer>>();
+		add(m_customers);
 		
 		using JamTemplate::TweenAlpha;
 		using JamTemplate::SmartShape;
@@ -95,8 +59,18 @@ private:
 		m_overlay->update(0);
 		auto tw = TweenAlpha<SmartShape>::create(m_overlay, 0.5f, sf::Uint8{ 255 }, sf::Uint8{ 0 });
 		add(tw);
+
+		spawnCustomer();
+		auto t = std::make_shared<JamTemplate::Timer>(5, [this]() {spawnCustomer(); });
+		add(t);
 	}
 
+	void spawnCustomer()
+	{
+		auto c = std::make_shared<Customer>(*this);
+		add(c);
+		m_customers->push_back(c);
+	}
 	void drawSky() const
 	{
 		getGame()->getRenderTarget()->draw(m_sky);

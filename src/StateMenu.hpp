@@ -1,3 +1,4 @@
+
 #ifndef GAME_STATE_MENU_HPP_INCLUDEGUARD
 #define GAME_STATE_MENU_HPP_INCLUDEGUARD
 
@@ -11,8 +12,8 @@ public:
 private:
 	void doInternalUpdate (float const /*elapsed*/) override 
 	{
-		//if (getAge() >= 0.25)
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+		if (getAge() >= 0.25)
+		//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
 		{
 			getGame()->switchState(std::make_shared<StateGame>());
 		}
